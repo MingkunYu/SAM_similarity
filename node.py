@@ -297,7 +297,7 @@ class GroundingDinoSAMSegment:
         }
     CATEGORY = "segment_anything"
     FUNCTION = "main"
-    RETURN_TYPES = ("FLOAT",)
+    RETURN_TYPES = ("FLOAT_LIST",)
 
     def main(self, sam_model, image, prediction_image):
         res=[]
@@ -317,7 +317,7 @@ class GroundingDinoSAMSegment:
             )
             res.append(ans)
         
-        return ans
+        return res
 
 
 class InvertMask:
