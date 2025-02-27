@@ -317,7 +317,7 @@ class GroundingDinoSAMSegment:
             )
             res.append(ans)
         
-        return res
+        return ans
 
 
 class InvertMask:
