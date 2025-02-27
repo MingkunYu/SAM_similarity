@@ -301,7 +301,6 @@ class GroundingDinoSAMSegment:
         return {
             "required": {
                 "sam_model": ('SAM_MODEL', {}),
-                "grounding_dino_model": ('GROUNDING_DINO_MODEL', {}),
                 "image": ('IMAGE', {}),
                 "prediction_image": ("IMAGE", {}),
                 
@@ -311,7 +310,7 @@ class GroundingDinoSAMSegment:
     FUNCTION = "main"
     RETURN_TYPES = ("FLOAT")
 
-    def main(self, grounding_dino_model, sam_model, image, prediction_image):
+    def main(self, sam_model, image, prediction_image):
         res=[]
         for ind in range(len(image)):
             item = image[ind]
