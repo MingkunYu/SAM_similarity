@@ -49,17 +49,6 @@ sam_model_list = {
     }
 }
 
-groundingdino_model_dir_name = "grounding-dino"
-groundingdino_model_list = {
-    "GroundingDINO_SwinT_OGC (694MB)": {
-        "config_url": "https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/GroundingDINO_SwinT_OGC.cfg.py",
-        "model_url": "https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/groundingdino_swint_ogc.pth",
-    },
-    "GroundingDINO_SwinB (938MB)": {
-        "config_url": "https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/GroundingDINO_SwinB.cfg.py",
-        "model_url": "https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/groundingdino_swinb_cogcoor.pth"
-    },
-}
 
 def get_bert_base_uncased_model_path():
     comfy_bert_model_base = os.path.join(folder_paths.models_dir, 'bert-base-uncased')
@@ -308,7 +297,7 @@ class GroundingDinoSAMSegment:
         }
     CATEGORY = "segment_anything"
     FUNCTION = "main"
-    RETURN_TYPES = ("FLOAT")
+    RETURN_TYPES = ("FLOAT",)
 
     def main(self, sam_model, image, prediction_image):
         res=[]
