@@ -249,8 +249,7 @@ def sam_segment(
         multimask_output=False,
     )
     
-    
-    return np.sum(bg)/255/3 / np.sum(masks)
+    return np.sum(bg)/np.max(bg) / np.sum(masks)
 
 
 class SAMModelLoader:
@@ -270,23 +269,6 @@ class SAMModelLoader:
         return (sam_model, )
 
 
-class GroundingDinoModelLoader:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "model_name": (list_groundingdino_model(), ),
-            }
-        }
-    CATEGORY = "segment_anything"
-    FUNCTION = "main"
-    RETURN_TYPES = ("GROUNDING_DINO_MODEL", )
-
-    def main(self, model_name):
-        dino_model = load_groundingdino_model(model_name)
-        return (dino_model, )
-
-
 class GroundingDinoSAMSegment:
     @classmethod
     def INPUT_TYPES(cls):
@@ -300,23 +282,30 @@ class GroundingDinoSAMSegment:
         }
     CATEGORY = "segment_anything"
     FUNCTION = "main"
-    RETURN_TYPES = ("FLOAT",)
+    RETURN_TYPES = ("FLOAT_LIST",)
 
     def main(self, sam_model, image, prediction_image):
-        item = image.cpu().numpy()
-        pim = prediction_image.cpu().numpy()
+        
+        res = []
+        for i in range(len(image)):
+            item = image[i]
+            pim = prediction_image[i]
 
-        item = Image.fromarray(
-            np.clip(255. * item , 0, 255).astype(np.uint8))
+            item = item.cpu().to(torch.uint8).numpy()
+            pim = pim.cpu().to(torch.uint8).numpy()
 
-        pim =np.sum(pim, axis=2)
+            item = np.clip(255. * item , 0, 255).astype(np.uint8)
 
-        ans = sam_segment(
-            sam_model,
-            item,
-            pim
-        )
-        return ans
+            pim =np.sum(pim, axis=2)
+
+            ans = sam_segment(
+                sam_model,
+                item,
+                pim
+            )
+            res.append(ans)
+            
+        return res
 
 
 class InvertMask:
