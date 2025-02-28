@@ -247,7 +247,7 @@ def sam_segment(
     
     
     
-    return np.sum(bg)/255/3 / np.sum(masks)
+    return np.sum(bg.cpu().numpy())/255/3 / np.sum(masks.cpu().numpy())
 
 
 class SAMModelLoader:
@@ -308,7 +308,7 @@ class GroundingDinoSAMSegment:
             item = Image.fromarray(
                 np.clip(255. * item.cpu().numpy(), 0, 255).astype(np.uint8)).convert('RGBA')
             
-            pim = np.sum(pim, axis=2)
+            pim =torch.sum(pim, dim=2)
             
             ans = sam_segment(
                 sam_model,
