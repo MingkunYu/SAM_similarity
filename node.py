@@ -225,9 +225,7 @@ def sam_segment(
     if hasattr(sam_model, 'model_name') and 'hq' in sam_model.model_name:
         sam_is_hq = True
     predictor = SamPredictorHQ(sam_model, sam_is_hq)
-    image_np = np.array(image)
-    image_np_rgb = image_np[..., :3]
-    predictor.set_image(image_np_rgb)
+    predictor.set_image(image)
     
     bg = input_point[:]
     
@@ -241,13 +239,18 @@ def sam_segment(
     point_labels=input_label,
     multimask_output=True,
     )
+
+    mask_input = logits[np.argmax(scores), :, :]  # Choose the model's best mask
+
+    masks, _, _ = predictor.predict(
+        point_coords=input_point,
+        point_labels=input_label,
+        mask_input=mask_input[None, :, :],
+        multimask_output=False,
+    )
     
     
-    mask_input = logits[np.argmax(scores), :, :]
-    
-    
-    
-    return np.sum(bg.cpu().numpy())/255/3 / np.sum(masks.cpu().numpy())
+    return np.sum(bg)/255/3 / np.sum(masks)
 
 
 class SAMModelLoader:
@@ -297,27 +300,23 @@ class GroundingDinoSAMSegment:
         }
     CATEGORY = "segment_anything"
     FUNCTION = "main"
-    RETURN_TYPES = ("FLOAT_LIST",)
+    RETURN_TYPES = ("FLOAT",)
 
     def main(self, sam_model, image, prediction_image):
-        res=[]
-        for ind in range(len(image)):
-            item = image[ind]
-            pim = prediction_image[ind].cpu().numpy()
-            
-            item = Image.fromarray(
-                np.clip(255. * item.cpu().numpy(), 0, 255).astype(np.uint8)).convert('RGBA')
-            
-            pim =torch.sum(pim, dim=2)
-            
-            ans = sam_segment(
-                sam_model,
-                item,
-                pim
-            )
-            res.append(ans)
-        
-        return res
+        item = image.cpu().numpy()
+        pim = prediction_image.cpu().numpy()
+
+        item = Image.fromarray(
+            np.clip(255. * item , 0, 255).astype(np.uint8))
+
+        pim =np.sum(pim, axis=2)
+
+        ans = sam_segment(
+            sam_model,
+            item,
+            pim
+        )
+        return ans
 
 
 class InvertMask:
