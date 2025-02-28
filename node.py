@@ -303,7 +303,7 @@ class GroundingDinoSAMSegment:
         res=[]
         for ind in range(len(image)):
             item = image[ind]
-            pim = prediction_image[ind]
+            pim = prediction_image[ind].cpu().numpy()
             
             item = Image.fromarray(
                 np.clip(255. * item.cpu().numpy(), 0, 255).astype(np.uint8)).convert('RGBA')
