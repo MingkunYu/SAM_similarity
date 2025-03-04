@@ -294,7 +294,7 @@ class SAMModelLoader:
         return (sam_model, )
 
 
-class GroundingDinoSAMSegment:
+class SAMSimilarity:
     @classmethod
     def INPUT_TYPES(cls):
         return {

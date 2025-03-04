@@ -3,7 +3,7 @@ from .install import *
 
 NODE_CLASS_MAPPINGS = {
     'SAMModelLoader (segment anything)': SAMModelLoader,
-    'GroundingDinoSAMSegment (segment anything)': GroundingDinoSAMSegment,
+    'SAMSimilarity (segment anything)': SAMSimilarity,
     'InvertMask (segment anything)': InvertMask,
     "IsMaskEmpty": IsMaskEmptyNode,
 }
